@@ -39,11 +39,11 @@ function LoginPage() {
         checkLogin();
     }, [api]);
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (isLoggedIn) {
             navigate("/")
         }
-    }, [isLoggedIn, navigate]);*/
+    }, [isLoggedIn, navigate]);
 
     function handleEmailChange(event) {
         setEmail(event.target.value);
