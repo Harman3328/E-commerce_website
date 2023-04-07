@@ -13,6 +13,7 @@ const encrypt = require('./Encrypt')
 const jwt = require('./JWToken')
 const cookieParser = require('cookie-parser');
 const { DATETIME } = require("mysql/lib/protocol/constants/types");
+const revokedToken = new Set();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -150,48 +151,53 @@ app.post("/login", function (req, res) {
 
 app.get("/verifyaccesstoken", function (req, res) {
   const token = req.cookies.accessToken
-  const verifyExpire = jwt.verifyToken(token)
-  console.log(verifyExpire)
-  jwt.verifyUsername(token)
-    .then((result) => {
-      const valid = result && verifyExpire
-      res.send({ isValid: valid })
-    })
-    .catch((error) => {
-      console.log(error)
-      res.send({ isValid: false })
-    })
+  if (revokedToken.has(token)) {
+    res.send({ isValid: false })
+  } else {
+    const verifyExpire = jwt.verifyToken(token)
+    jwt.verifyUsername(token)
+      .then((result) => {
+        const valid = result && verifyExpire
+        res.send({ isValid: valid })
+      })
+      .catch((error) => {
+        console.log(error)
+        res.send({ isValid: false })
+      })
+  }
 })
 
 app.get("/verifyRefreshToken", function (req, res) {
   const token = req.cookies.refreshToken
-  const verifyExpire = jwt.verifyToken(token)
-  jwt.verifyUsername(token)
-    .then((result) => {
-      const valid = result && verifyExpire
-      if (valid) {
-        const aToken = jwt.newAccessToken(token)
-        res.send({ success: true, accessToken: aToken })
-      } else {
+  if (revokedToken.has(token)) {
+    res.send({ isValid: false })
+  } else {
+    const verifyExpire = jwt.verifyToken(token)
+    jwt.verifyUsername(token)
+      .then((result) => {
+        const valid = result && verifyExpire
+        if (valid) {
+          const aToken = jwt.newAccessToken(token)
+          res.send({ success: true, accessToken: aToken })
+        } else {
+          res.send({ success: false })
+        }
+      })
+      .catch((error) => {
+        console.log(error)
         res.send({ success: false })
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-      res.send({ success: false })
-    })
+      })
+  }
 })
 
 app.get("/logout", function (req, res) {
-  const token = req.cookies.accessToken
-  const uName = jwt.getUsername(token)
-  const perm = jwt.getPermission(token)
-  const expiration = Math.floor(Date.now() / 1000) - 3600;
+  const accessToken = req.cookies.accessToken
+  const refreshToken = req.cookies.refreshToken
 
-  const aToken = jwt.token(uName, perm, expiration)
-  const rToken = jwt.token(uName, perm, expiration)
+  revokedToken.add(accessToken)
+  revokedToken.add(refreshToken)
 
-  res.send({ accessToken: aToken, refreshToken: rToken})
+  res.send("logged out")
 
 })
 
