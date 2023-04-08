@@ -201,6 +201,20 @@ app.get("/logout", function (req, res) {
 
 })
 
+app.get("/orderNumbers", function(req, res) {
+  const token = req.cookies.accessToken
+  const username = jwt.getUsername(token)
+
+  db.queryDatabase('SELECT orders.orderNumber, orders.status FROM orders WHERE customerNumber=?',[username])
+    .then((result) => {
+      res.send({success: true, info: result})
+    })
+    .catch((error) => {
+      console.log(error)
+      res.send({success: false})
+    })
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
