@@ -215,6 +215,20 @@ app.get("/orderNumbers", function(req, res) {
     })
 })
 
+app.get("/order/:orderNumber", function(req, res) {
+  const orderNumber = req.params.orderNumber
+  db.queryDatabase(`SELECT orderdetails.productCode, orderdetails.quantityOrdered, products.productName
+  FROM orderdetails inner join products on orderdetails.productCode=products.productCode 
+  where orderdetails.orderNumber=?`, [orderNumber])
+    .then((result) => {
+      res.send({success: true, info: result})
+    })
+    .catch((error) => {
+      console.log(error)
+      res.send({success: false})
+    })
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
