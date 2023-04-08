@@ -7,6 +7,8 @@ import SearchPage from './components/SearchPage';
 import LoginPage from './components/LoginPage';
 import CreateAccount from './components/CreateAccount';
 import Logout from './components/Logout';
+import OrderPage from './components/OrderPage';
+import Order from './components/Order'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path='/loginpage' element={<LoginPage />}></Route>
         <Route path='/createaccount' element={<CreateAccount />}></Route>
         <Route path='/logout' element={<Logout />}></Route>
+        <Route path='/orders' element={<OrderPage />}></Route>
+        <Route path='/order/:orderNumber' element={<Order />}></Route>
       </Routes>
     </Router>
   );
