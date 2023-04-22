@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Card from 'react-bootstrap/Card';
-import CardGroup from 'react-bootstrap/CardGroup';
 import axios from 'axios';
-import './styles.css';
+import './Home.css';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -10,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
  * @returns Home page
  */
 function Home() {
-    const [data, setData] = useState([{productName: "Loading"}]);
+    const [data, setData] = useState([{ productName: "Loading" }]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,9 +19,9 @@ function Home() {
         try {
             const response = await axios.get('http://localhost:3001/productName');
             setData(response.data);
-        }catch (error) {
+        } catch (error) {
             console.error(error);
-          }
+        }
     }
 
     function handleClick(id) {
@@ -32,93 +30,19 @@ function Home() {
 
     const rows = [];
 
-    for(let i=0; i<data.length; i+=3) {
-        if(i+2<data.length) {
-            rows.push(
-                <CardGroup key={i}>
-                    <Card onClick={() => handleClick(data[i].productCode)}>
-                        <Card.Body>
-                            <Card.Title>{data[i].productName}</Card.Title>
-                            <Card.Text>
-                                {JSON.stringify(data[i].productDescription)}
-                            </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                        </Card.Footer>
-                    </Card>
-                    <Card onClick={() => handleClick(data[i+1].productCode)}>
-                        <Card.Body>
-                            <Card.Title>{data[i+1].productName}</Card.Title>
-                            <Card.Text>
-                                {JSON.stringify(data[i+1].productDescription)}
-                            </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                        </Card.Footer>
-                    </Card>
-                    <Card onClick={() => handleClick(data[i+2].productCode)}>
-                        <Card.Body>
-                            <Card.Title>{data[i+2].productName}</Card.Title>
-                            <Card.Text>
-                                {JSON.stringify(data[i+2].productDescription)}
-                            </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                        </Card.Footer>
-                    </Card>
-                </CardGroup>
-            );
-        } else if (i+1<data.length) {
-            rows.push(
-                <CardGroup key={i}>
-                    <Card onClick={() => handleClick(data[i].productCode)}>
-                        <Card.Body>
-                            <Card.Title>{data[i].productName}</Card.Title>
-                            <Card.Text>
-                                {JSON.stringify(data[i].productDescription)}
-                            </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                        </Card.Footer>
-                    </Card>
-                    <Card onClick={() => handleClick(data[i+1].productCode)}>
-                        <Card.Body>
-                            <Card.Title>{data[i+1].productName}</Card.Title>
-                            <Card.Text>
-                                {JSON.stringify(data[i+1].productDescription)}
-                            </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                        </Card.Footer>
-                    </Card>
-                </CardGroup>
-            );
-        } else {
-            rows.push(
-                <CardGroup key={i}>
-                    <Card onClick={() => handleClick(data[i].productCode)}>
-                        <Card.Body>
-                            <Card.Title>{data[i].productName}</Card.Title>
-                            <Card.Text>
-                                {JSON.stringify(data[i].productDescription)}
-                            </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                            <small className="text-muted">Last updated 3 mins ago</small>
-                        </Card.Footer>
-                    </Card>
-                </CardGroup>
-            );
-        }
+    for (let i = 0; i < data.length; i++) {
+        rows.push(
+            <div key={i} className="Card" onClick={() => handleClick(data[i].productCode)} >
+                <img className="image" src={data[i].image}></img>
+                <p className="productName">{data[i].productName}</p>
+            </div >
+        );
     }
     return (
-        <div>
-            {rows}
+        <div className="my-component">
+            <div className="cardGroup">
+                {rows}
+            </div>
         </div>
     );
 }

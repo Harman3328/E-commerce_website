@@ -26,8 +26,10 @@ function LoginPage() {
                     if (resp.data.success) {
                         const cookies = new Cookies();
                         setIsLoggedIn(resp.data.success)
-                        cookies.set('accessToken', resp.data.accessToken, { path: '/', httpOnly: false, 
-                        secure: true });
+                        cookies.set('accessToken', resp.data.accessToken, {
+                            path: '/', httpOnly: false,
+                            secure: true
+                        });
                     } else {
                         setIsLoggedIn(resp.data.success)
                     }
@@ -73,30 +75,32 @@ function LoginPage() {
         }
     }
     return (
-        <div className='LoginPage'>
-            <form onSubmit={handleSubmit}>
-                <h1 className='page-title'>Login Page</h1>
-                <div className="row mb-3">
+        <div className='component'>
+            <div className="block">
+                <form onSubmit={handleSubmit}>
+                    <h1 className='page-title'>Login Page</h1>
+                    <div className="row mb-3">
+                        <div className="col-sm-10">
+                            <input type="username" className="form-control" id="inputEmail3" value={email} onChange={handleEmailChange}
+                                placeholder='Employee/Customer Number' />
+                        </div>
+                    </div>
+                    <div className="row mb-3">
+                        <div className="col-sm-10">
+                            <input type="password" className="form-control" id="inputPassword3" value={password} onChange={handlePasswordChange}
+                                placeholder='Password' />
+                        </div>
+                    </div>
                     <div className="col-sm-10">
-                        <input type="username" className="form-control" id="inputEmail3" value={email} onChange={handleEmailChange}
-                            placeholder='Employee/Customer Number' />
+                        <div className="hyperlinks">
+                            <Link id="hlink" to="/createaccount">Create Account</Link>
+                            <br />
+                            <Link id="hlink" to="/">Forgot Password</Link>
+                        </div>
                     </div>
-                </div>
-                <div className="row mb-3">
-                    <div className="col-sm-10">
-                        <input type="password" className="form-control" id="inputPassword3" value={password} onChange={handlePasswordChange}
-                            placeholder='Password' />
-                    </div>
-                </div>
-                <div className="col-sm-10">
-                    <div className="hyperlinks">
-                        <Link className="hlink" to="/createaccount">Create Account</Link>
-                        <br />
-                        <Link className="hlink" to="/">Forgot Password</Link>
-                    </div>
-                </div>
-                <button type="submit" className="btn btn-primary" id='loginButton'>Sign in</button>
-            </form>
+                    <button type="submit" className="loginButton">Sign in</button>
+                </form>
+            </div>
         </div>
     );
 }

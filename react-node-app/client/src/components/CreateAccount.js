@@ -42,7 +42,7 @@ function CreateAccount() {
                 if (response.data.success) {
                     navigate('/loginpage')
                 } else {
-                    setEmail(''); 
+                    setEmail('');
                     setPassword('');
                     setComfirmPassword('');
                     alert("Incorrect Username");
@@ -54,7 +54,7 @@ function CreateAccount() {
     }
 
     return (
-        <div className='CreateAccountForm'>
+        <div className='block'>
             <form onSubmit={handleSubmit}>
                 <h1 className='page-title'>Create Account Page</h1>
                 <div className="row mb-3">
@@ -75,7 +75,7 @@ function CreateAccount() {
                             placeholder='Comfirm Password' />
                     </div>
                 </div>
-                <button type="submit" className="btn btn-primary" id='loginButton'>Create Account</button>
+                <button type="submit" className="loginButton">Create Account</button>
             </form>
         </div>
     );

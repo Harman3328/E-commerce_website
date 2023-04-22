@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import axios from 'axios';
-import './styles.css';
+import './SearchPage.css';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function SearchPage() {

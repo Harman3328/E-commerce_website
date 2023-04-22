@@ -27,7 +27,8 @@ app.use(cors({
 app.use(cookieParser());
 
 app.get("/productName", (req, res) => {
-  db.queryDatabase('SELECT products.productName, products.productDescription, products.productCode FROM products', [])
+  db.queryDatabase(`SELECT products.productName, products.productDescription, products.productCode, products.image 
+  FROM products`, [])
     .then((result) => {
       res.send(result);
     })

@@ -1,0 +1,47 @@
+.cardGroup {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .cardGroup {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .cardGroup {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}
+
+
+.Card {
+    background-color: rgb(43, 44, 46);
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    transition: transform 0.2s ease-in-out;
+    color: white;
+    width: 350px;
+    height: 400px;
+    margin: 10px;
+}
+
+.Card:hover {
+    transform: scale(1.1);
+}
+
+.image {
+    width: 100%;
+    height: auto;
+}
+
+.productName {
+    flex-wrap: wrap;
+    text-align: center;
+    margin-top: 5%;
+}
