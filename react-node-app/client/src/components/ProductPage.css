@@ -1,3 +1,11 @@
 .product-page {
     color: white;
 }
+
+.product-p-tag {
+    margin: 20px;
+}
+
+.product-title {
+    margin-left: 10px;
+}

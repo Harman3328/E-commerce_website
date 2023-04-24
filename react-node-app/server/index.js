@@ -243,11 +243,38 @@ app.get("/payments", function (req, res) {
   const username = jwt.getUsername(token)
   db.queryDatabase(`select checkNumber, paymentDate, amount from payments where customerNumber=?`, [username])
     .then((result) => {
-      res.send({info: result})
+      res.send({ info: result })
     }).catch((error) => {
       console.log(error)
-      res.send({info: []})
+      res.send({ info: [] })
     })
+})
+
+app.get("/customerinfo", function (req, res) {
+  const token = req.cookies.accessToken
+  const username = jwt.getUsername(token)
+  const role = jwt.getPermission(token)
+
+  if (role === "user") {
+    db.queryDatabase('select * from customers where customerNumber=?', [username])
+      .then((result) => {
+        res.send({ info: result })
+      }).catch((error) => {
+        console.log(error)
+        res.send({ info: [] })
+      })
+  } else {
+    db.queryDatabase(`select *
+    from employees
+    inner join offices on employees.officeCode = offices.officeCode
+    where employeeNumber=?`, [username])
+      .then((result) => {
+        res.send({ info: result })
+      }).catch((error) => {
+        console.log(error)
+        res.send({ info: [] })
+      })
+  }
 })
 
 app.listen(PORT, () => {
