@@ -9,6 +9,7 @@ import CreateAccount from './components/CreateAccount';
 import Logout from './components/Logout';
 import OrderPage from './components/OrderPage';
 import Order from './components/Order'
+import PaymentPage from './components/PaymentPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path='/logout' element={<Logout />}></Route>
         <Route path='/orders' element={<OrderPage />}></Route>
         <Route path='/order/:orderNumber' element={<Order />}></Route>
+        <Route path='/payment' element={<PaymentPage />}></Route>
       </Routes>
     </Router>
   );

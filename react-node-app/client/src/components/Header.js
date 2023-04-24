@@ -128,7 +128,7 @@ function Header() {
                 <Nav.Link id='fontColor' href="/">Home</Nav.Link>
                 <NavDropdown title="Account" id="navbarScrollingDropdown">
                   <NavDropdown.Item href="/orders">Orders</NavDropdown.Item>
-                  <NavDropdown.Item href="#action4">Payments</NavDropdown.Item>
+                  <NavDropdown.Item href="/payment">Payments</NavDropdown.Item>
                   <NavDropdown.Item href="#action5">Info</NavDropdown.Item>
                   <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
                 </NavDropdown>
