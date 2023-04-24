@@ -5,67 +5,62 @@ import { checkLogin } from "./Auth";
 import { getRole } from "./Role";
 import "./PaymentPage.css"
 
-
 const api = axios.create({
     baseURL: 'http://localhost:3001',
     withCredentials: true,
 });
 
 function PaymentPage() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [payments, setPayments] = useState([])
+    const [payments, setPayments] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        checkLogin()
-            .then((result) => {
-                setIsLoggedIn(result)
-                if (!result) {
-                    navigate("/")
-                }
-                getRole()
-                    .then((result) => {
-                        if (result === "admin") {
-                            navigate("/")
-                        }
-                    }).catch((err) => {
-                        console.log(err)
-                    })
-            }).catch((err) => {
-                console.log(err)
-            })
-    }, [isLoggedIn, navigate]);
+        async function fetchData() {
+            try {
+                const loggedIn = await checkLogin();
 
-    useEffect(() => {
-        async function getPayments() {
-            const response = await api.get("/payments")
-            setPayments(response.data.info)
+                if (!loggedIn) {
+                    navigate("/");
+                }
+
+                const role = await getRole();
+
+                if (role === "admin") {
+                    navigate("/");
+                }
+
+                const { data } = await api.get("/payments");
+                setPayments(data.info);
+            } catch (error) {
+                console.log(error);
+            }
         }
-        getPayments()
-    }, [])
+
+        fetchData();
+    }, [navigate]);
 
     if (payments.length === 0) {
-        return (
-            <h1>No payments</h1>
-        )
+        return <h1>No payments</h1>;
     }
 
-    const rows = []
+    const headers = Object.keys(payments[0])
+    const renderPaymentRows = () => {
+        return payments.map((payment) => {
+            return (
+                <div key={payment.checkNumber} className="paymentInfo">
+                    {headers.map(header => {
+                        return <p key={header} className="payment-P-tag">{header}: {payment[header]}</p>
+                    })}
+                </div>
+            );
+        });
+    };
 
-    for (let i = 0; i < payments.length; i++) {
-        rows.push(
-            <div key={i} className="paymentInfo">
-                <p className="payment-P-tag">checkNumber: {payments[i].checkNumber}</p>
-                <p className="payment-P-tag">Payment Date: {payments[i].paymentDate}</p>
-                <p className="payment-P-tag">Amount: ${payments[i].amount}</p>
-            </div>
-        )
-    }
     return (
         <div>
-            {rows}
+            {renderPaymentRows()}
         </div>
-    )
+    );
 }
 
-export default PaymentPage
+export default PaymentPage;

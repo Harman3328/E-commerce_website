@@ -20,24 +20,24 @@ function OrderPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        checkLogin()
-            .then((result) => {
-                setIsLoggedIn(result)
+        async function checkUserLogin() {
+            try {
+                const result = await checkLogin();
+                setIsLoggedIn(result);
                 if (!result) {
-                    navigate("/")
+                    navigate('/');
+                } else {
+                    const userRole = await getRole();
+                    if (userRole === 'admin') {
+                        navigate('/');
+                    }
                 }
-                getRole()
-                    .then((result) => {
-                        if (result === "admin") {
-                            navigate("/")
-                        }
-                    }).catch((err) => {
-                        console.log(err)
-                    })
-            }).catch((err) => {
-                console.log(err)
-            })
-    }, [isLoggedIn, navigate]);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        checkUserLogin();
+    }, [navigate]);
 
     useEffect(() => {
         async function getOrders() {
@@ -58,7 +58,6 @@ function OrderPage() {
         }
         getOrders();
     }, [isLoggedIn]);
-
 
     function handleClick(orderNumber) {
         navigate(`/order/${orderNumber}`);
@@ -94,8 +93,8 @@ function OrderPage() {
 
     return (
         <>
-            {myOrders.map((order, index) => (
-                <OrderRow key={index} order={order} />
+            {myOrders.map((order) => (
+                <OrderRow key={order.orderNumber} order={order} />
             ))}
         </>
     );

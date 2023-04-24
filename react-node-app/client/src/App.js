@@ -10,6 +10,7 @@ import Logout from './components/Logout';
 import OrderPage from './components/OrderPage';
 import Order from './components/Order'
 import PaymentPage from './components/PaymentPage';
+import InfoPage from './components/InfoPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path='/orders' element={<OrderPage />}></Route>
         <Route path='/order/:orderNumber' element={<Order />}></Route>
         <Route path='/payment' element={<PaymentPage />}></Route>
+        <Route path='/info' element={<InfoPage />}></Route>
       </Routes>
     </Router>
   );

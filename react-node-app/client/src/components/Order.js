@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import './OrderPage.css'
 import ListGroup from 'react-bootstrap/ListGroup';
 import PropTypes from 'prop-types';
 import { checkLogin } from './Auth';
@@ -14,52 +13,35 @@ const api = axios.create({
 
 function OrderPage() {
     const { orderNumber } = useParams();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [myOrders, setMyOrders] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [orderData, setOrderData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         checkLogin()
-            .then((result) => {
-                setIsLoggedIn(result)
-                if (!result) {
-                    navigate("/")
+            .then((isLoggedIn) => {
+                if (!isLoggedIn) {
+                    throw new Error('User not logged in');
                 }
-                getRole()
-                    .then((result) => {
-                        if (result === "admin") {
-                            navigate("/")
-                        }
-                    }).catch((err) => {
-                        console.log(err)
-                    })
-            }).catch((err) => {
-                console.log(err)
+                return getRole();
             })
-    }, [isLoggedIn, navigate]);
-
-    useEffect(() => {
-        async function getOrders() {
-            setIsLoading(true);
-            try {
-                if (isLoggedIn) {
-                    const response = await api.get(`/order/${orderNumber}`);
-                    setMyOrders(response.data.info);
-                } else {
-                    setMyOrders([]);
+            .then((role) => {
+                if (role === 'admin') {
+                    throw new Error('Admins cannot view orders');
                 }
-            } catch (error) {
-                console.error(error);
-                setError('Failed to fetch orders. Please try again later.');
-            } finally {
+                return api.get(`/order/${orderNumber}`);
+            })
+            .then((response) => {
+                setOrderData(response.data.info);
+            })
+            .catch((error) => {
+                setError(error.message);
+            })
+            .finally(() => {
                 setIsLoading(false);
-            }
-        }
-        getOrders();
-    }, [isLoggedIn, orderNumber]);
-
+            });
+    }, [orderNumber]);
 
     function handleClick(productCode) {
         navigate(`/productpage/${productCode}`);
@@ -80,7 +62,6 @@ function OrderPage() {
         order: PropTypes.object.isRequired,
     };
 
-
     if (isLoading) {
         return <h2>Loading</h2>;
     }
@@ -89,14 +70,14 @@ function OrderPage() {
         return <p>{error}</p>;
     }
 
-    if (myOrders.length === 0) {
+    if (orderData.length === 0) {
         return <h3>No Orders</h3>;
     }
 
     return (
         <>
-            {myOrders.map((order, index) => (
-                <OrderRow key={index} order={order} />
+            {orderData.map((order) => (
+                <OrderRow key={order.orderNumber} order={order} />
             ))}
         </>
     );
