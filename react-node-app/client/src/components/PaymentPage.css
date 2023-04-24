@@ -1,0 +1,9 @@
+.paymentInfo {
+    color: white;
+    display: flex;
+    border: 2px solid grey;
+}
+
+.payment-P-tag {
+    margin: 20px;
+}

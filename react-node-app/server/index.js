@@ -203,39 +203,51 @@ app.get("/logout", function (req, res) {
 
 })
 
-app.get("/orderNumbers", function(req, res) {
+app.get("/orderNumbers", function (req, res) {
   const token = req.cookies.accessToken
   const username = jwt.getUsername(token)
 
-  db.queryDatabase('SELECT orders.orderNumber, orders.status FROM orders WHERE customerNumber=?',[username])
+  db.queryDatabase('SELECT orders.orderNumber, orders.status FROM orders WHERE customerNumber=?', [username])
     .then((result) => {
-      res.send({success: true, info: result})
+      res.send({ success: true, info: result })
     })
     .catch((error) => {
       console.log(error)
-      res.send({success: false})
+      res.send({ success: false })
     })
 })
 
-app.get("/order/:orderNumber", function(req, res) {
+app.get("/order/:orderNumber", function (req, res) {
   const orderNumber = req.params.orderNumber
   db.queryDatabase(`SELECT orderdetails.productCode, orderdetails.quantityOrdered, products.productName
   FROM orderdetails inner join products on orderdetails.productCode=products.productCode 
   where orderdetails.orderNumber=?`, [orderNumber])
     .then((result) => {
-      res.send({success: true, info: result})
+      res.send({ success: true, info: result })
     })
     .catch((error) => {
       console.log(error)
-      res.send({success: false})
+      res.send({ success: false })
     })
 })
 
-app.get("/getrole", function(req, res) {
+app.get("/getrole", function (req, res) {
   const token = req.cookies.accessToken
   const role = jwt.getPermission(token)
-  res.send({permission: role})
+  res.send({ permission: role })
 
+})
+
+app.get("/payments", function (req, res) {
+  const token = req.cookies.accessToken
+  const username = jwt.getUsername(token)
+  db.queryDatabase(`select checkNumber, paymentDate, amount from payments where customerNumber=?`, [username])
+    .then((result) => {
+      res.send({info: result})
+    }).catch((error) => {
+      console.log(error)
+      res.send({info: []})
+    })
 })
 
 app.listen(PORT, () => {

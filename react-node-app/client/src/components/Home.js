@@ -48,29 +48,6 @@ function Home() {
                 </div >
             );
         }
-
-        /*console.log(data[0].productCode)
-        for (let i = 0; i < data.length; i++) {
-            const productNames = data[i].productName.split(",");
-            const productCodes = data[i].productCode.split(",");
-            var productImage = []
-            if (data[i].image !== null) {
-                productImage = data[i].image.split(",");
-            }
-            rows.push(
-                <div key={i} className="productLine-title">
-                    <h1>{data[i].productLine}</h1>
-                </div>
-            )
-
-            for (let j = 0; j < productNames.length; j++) {
-                rows.push(
-                    <div key={`${i}-${j}`} className="Card" onClick={() => handleClick(productCodes[j])} >
-                        <p className="productName">{productNames[j]}</p>
-                    </div >
-                );
-            }
-        }*/
     }
 
     return (
