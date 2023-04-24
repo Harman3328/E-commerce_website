@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
  * @returns Home page
  */
 function Home() {
-    const [data, setData] = useState([{ productName: "Loading" }]);
+    const [data, setData] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,7 +17,7 @@ function Home() {
 
     async function fetchData() {
         try {
-            const response = await axios.get('http://localhost:3001/productName');
+            const response = await axios.get('http://localhost:3001/products');
             setData(response.data);
         } catch (error) {
             console.error(error);
@@ -29,15 +29,50 @@ function Home() {
     }
 
     const rows = [];
+    if (data.length !== 0) {
+        var prodLine = ""
 
-    for (let i = 0; i < data.length; i++) {
-        rows.push(
-            <div key={i} className="Card" onClick={() => handleClick(data[i].productCode)} >
-                <img className="image" src={data[i].image}></img>
-                <p className="productName">{data[i].productName}</p>
-            </div >
-        );
+        for (let i = 0; i < data.length; i++) {
+            if (prodLine !== data[i].productLine) {
+                prodLine = data[i].productLine;
+                rows.push(
+                    <div key={i} className="productLine-title">
+                        <h1>{data[i].productLine}</h1>
+                    </div>
+                )
+            }
+
+            rows.push(
+                <div key={data[i].productCode} className="Card" onClick={() => handleClick(data[i].productCode)} >
+                    <p className="productName">{data[i].productName}</p>
+                </div >
+            );
+        }
+
+        /*console.log(data[0].productCode)
+        for (let i = 0; i < data.length; i++) {
+            const productNames = data[i].productName.split(",");
+            const productCodes = data[i].productCode.split(",");
+            var productImage = []
+            if (data[i].image !== null) {
+                productImage = data[i].image.split(",");
+            }
+            rows.push(
+                <div key={i} className="productLine-title">
+                    <h1>{data[i].productLine}</h1>
+                </div>
+            )
+
+            for (let j = 0; j < productNames.length; j++) {
+                rows.push(
+                    <div key={`${i}-${j}`} className="Card" onClick={() => handleClick(productCodes[j])} >
+                        <p className="productName">{productNames[j]}</p>
+                    </div >
+                );
+            }
+        }*/
     }
+
     return (
         <div className="my-component">
             <div className="cardGroup">
@@ -47,4 +82,4 @@ function Home() {
     );
 }
 
-export default Home; 
+export default Home;

@@ -7,12 +7,14 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Cookies from 'universal-cookie';
-import './Header.css'; 
+import './Header.css';
+import { checkLogin } from './Auth';
+import { getRole } from './Role';
 
 function Header() {
   const [searchValue, setSearchValue] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState()
   const navigate = useNavigate();
   const api = axios.create({
     baseURL: 'http://localhost:3001',
@@ -20,29 +22,20 @@ function Header() {
   })
 
   useEffect(() => {
-    async function checkLogin() {
-      try {
-        const response = await api.get('/verifyaccesstoken');
-        if (response.data.isValid) {
-          setIsLoggedIn(response.data.isValid)
-        } else {
-          const resp = await api.get('/verifyRefreshToken')
-          if (resp.data.success) {
-            const cookies = new Cookies();
-            setIsLoggedIn(resp.data.success)
-            cookies.set('accessToken', resp.data.accessToken, {
-              path: '/', httpOnly: false,
-              secure: true
-            });
-          } else {
-            setIsLoggedIn(resp.data.success)
-          }
+    checkLogin()
+      .then((result) => {
+        setIsLoggedIn(result)
+        if (result) {
+          getRole()
+            .then((res) => {
+              setRole(res)
+            }).catch((e) => {
+              console.log(e)
+            })
         }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    checkLogin();
+      }).catch((err) => {
+        console.log(err)
+      })
   }, [api, isLoggedIn]);
 
   const handleSearchChange = (event) => {
@@ -87,40 +80,75 @@ function Header() {
       </Navbar>
     );
   } else {
-    rows.push(
-      <Navbar bg="dark" expand="lg" key={1}>
-        <Container fluid>
-          <Navbar.Brand id='fontColor' href="/">Navbar scroll</Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: '100px' }}
-              navbarScroll
-            >
-              <Nav.Link id='fontColor' href="/">Home</Nav.Link>
-              <NavDropdown title="Account" id="navbarScrollingDropdown">
-                <NavDropdown.Item href="/orders">Orders</NavDropdown.Item>
-                <NavDropdown.Item href="#action4">Payments</NavDropdown.Item>
-                <NavDropdown.Item href="#action5">Info</NavDropdown.Item>
-                <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-            <Form className="d-flex" onSubmit={handleSearchSubmit}>
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="me-2"
-                aria-label="Search"
-                value={searchValue}
-                onChange={handleSearchChange}
-              />
-              <Button type="submit" variant="outline-success">Search</Button>
-            </Form>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    )
+    if (role === "admin") {
+      rows.push(
+        <Navbar bg="dark" expand="lg" key={1}>
+          <Container fluid>
+            <Navbar.Brand id='fontColor' href="/">Navbar scroll</Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbarScroll" />
+            <Navbar.Collapse id="navbarScroll">
+              <Nav
+                className="me-auto my-2 my-lg-0"
+                style={{ maxHeight: '100px' }}
+                navbarScroll
+              >
+                <Nav.Link id='fontColor' href="/">Home</Nav.Link>
+                <NavDropdown title="Account" id="navbarScrollingDropdown">
+                  <NavDropdown.Item href="#action5">Info</NavDropdown.Item>
+                  <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+              <Form className="d-flex" onSubmit={handleSearchSubmit}>
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2"
+                  aria-label="Search"
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                />
+                <Button type="submit" variant="outline-success">Search</Button>
+              </Form>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      )
+    } else {
+      rows.push(
+        <Navbar bg="dark" expand="lg" key={1}>
+          <Container fluid>
+            <Navbar.Brand id='fontColor' href="/">Navbar scroll</Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbarScroll" />
+            <Navbar.Collapse id="navbarScroll">
+              <Nav
+                className="me-auto my-2 my-lg-0"
+                style={{ maxHeight: '100px' }}
+                navbarScroll
+              >
+                <Nav.Link id='fontColor' href="/">Home</Nav.Link>
+                <NavDropdown title="Account" id="navbarScrollingDropdown">
+                  <NavDropdown.Item href="/orders">Orders</NavDropdown.Item>
+                  <NavDropdown.Item href="#action4">Payments</NavDropdown.Item>
+                  <NavDropdown.Item href="#action5">Info</NavDropdown.Item>
+                  <NavDropdown.Item href="/logout">Logout</NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+              <Form className="d-flex" onSubmit={handleSearchSubmit}>
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2"
+                  aria-label="Search"
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                />
+                <Button type="submit" variant="outline-success">Search</Button>
+              </Form>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      )
+    }
   }
 
   return (

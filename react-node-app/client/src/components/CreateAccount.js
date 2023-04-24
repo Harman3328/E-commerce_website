@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './CreateAccount.css'
+import { checkLogin } from './Auth';
 
 /**
  * sends a request to the server with an email and password
@@ -12,8 +13,20 @@ function CreateAccount() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setComfirmPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        checkLogin()
+            .then((result) => {
+                setIsLoggedIn(result)
+                if (!result) {
+                    navigate("/")
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+    }, [isLoggedIn, navigate]);
 
     function handleEmailChange(event) {
         setEmail(event.target.value);

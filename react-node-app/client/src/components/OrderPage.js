@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'universal-cookie';
 import ListGroup from 'react-bootstrap/ListGroup';
 import PropTypes from 'prop-types';
 import './OrderPage.css'
+import { checkLogin } from './Auth';
+import { getRole } from './Role';
 
 const api = axios.create({
     baseURL: 'http://localhost:3001',
@@ -19,34 +20,24 @@ function OrderPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function checkLogin() {
-            try {
-                const response = await api.get('/verifyaccesstoken');
-                if (response.data.isValid) {
-                    setIsLoggedIn(response.data.isValid);
-                } else {
-                    const resp = await api.get('/verifyRefreshToken');
-                    if (resp.data.success) {
-                        const cookies = new Cookies();
-                        setIsLoggedIn(resp.data.success);
-                        if (!resp.data.success) {
-                            navigate('/loginpage')
-                        }
-                        cookies.set('accessToken', resp.data.accessToken, {
-                            path: '/',
-                            httpOnly: false,
-                            secure: true,
-                        });
-                    } else {
-                        setIsLoggedIn(resp.data.success);
-                    }
+        checkLogin()
+            .then((result) => {
+                setIsLoggedIn(result)
+                if (!result) {
+                    navigate("/")
                 }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        checkLogin();
-    }, []);
+                getRole()
+                    .then((result) => {
+                        if (result === "admin") {
+                            navigate("/")
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+            }).catch((err) => {
+                console.log(err)
+            })
+    }, [isLoggedIn, navigate]);
 
     useEffect(() => {
         async function getOrders() {
@@ -76,7 +67,7 @@ function OrderPage() {
     function OrderRow({ order }) {
         return (
             <ListGroup as="ol">
-                <ListGroup.Item as="li" onClick={() => handleClick(order.orderNumber)}>
+                <ListGroup.Item as="li" id='list-order' onClick={() => handleClick(order.orderNumber)}>
                     <div className="orderNumber">{`Order Number: ${order.orderNumber}`}</div>
                     <div className="status">{`Status: ${order.status}`}</div>
                 </ListGroup.Item>

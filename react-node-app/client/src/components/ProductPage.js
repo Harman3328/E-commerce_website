@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import './ProductPage.css'
 
 function ProductPage() {
     const { id } = useParams();
@@ -19,7 +20,7 @@ function ProductPage() {
     }, [id]);
 
     return (
-        <div>
+        <div className="product-page">
             <h1>{data[0].productName}</h1>
             <p>Description: {data[0].productDescription}</p>
             <p>Buy Price: {data[0].buyPrice}</p>

@@ -4,47 +4,24 @@ import { Link } from 'react-router-dom';
 import './LoginPage.css';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
+import { checkLogin } from './Auth';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
-    const api = axios.create({
-        baseURL: 'http://localhost:3001',
-        withCredentials: true
-    })
 
     useEffect(() => {
-        async function checkLogin() {
-            try {
-                const response = await api.get('/verifyaccesstoken');
-                if (response.data.isValid) {
-                    setIsLoggedIn(response.data.isValid)
-                } else {
-                    const resp = await api.get('/verifyRefreshToken')
-                    if (resp.data.success) {
-                        const cookies = new Cookies();
-                        setIsLoggedIn(resp.data.success)
-                        cookies.set('accessToken', resp.data.accessToken, {
-                            path: '/', httpOnly: false,
-                            secure: true
-                        });
-                    } else {
-                        setIsLoggedIn(resp.data.success)
-                    }
+        checkLogin()
+            .then((result) => {
+                setIsLoggedIn(result)
+                if (result) {
+                    navigate("/")
                 }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        checkLogin();
-    }, [api]);
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            navigate("/")
-        }
+            }).catch((err) => {
+                console.log(err)
+            })
     }, [isLoggedIn, navigate]);
 
     function handleEmailChange(event) {

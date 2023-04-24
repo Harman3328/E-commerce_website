@@ -1,5 +1,5 @@
 .cardGroup {
-    display: flex;
+    
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
@@ -26,13 +26,13 @@
     padding: 10px;
     transition: transform 0.2s ease-in-out;
     color: white;
-    width: 350px;
-    height: 400px;
+    width: 25%; /* set the width to 25% to display 4 cards side by side in a row */
     margin: 10px;
 }
 
 .Card:hover {
     transform: scale(1.1);
+    cursor: pointer;
 }
 
 .image {
@@ -44,4 +44,8 @@
     flex-wrap: wrap;
     text-align: center;
     margin-top: 5%;
+}
+
+.productLine-title {
+    color: white;
 }

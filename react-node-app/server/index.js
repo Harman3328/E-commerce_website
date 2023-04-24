@@ -26,9 +26,10 @@ app.use(cors({
 
 app.use(cookieParser());
 
-app.get("/productName", (req, res) => {
-  db.queryDatabase(`SELECT products.productName, products.productDescription, products.productCode, products.image 
-  FROM products`, [])
+app.get("/products", (req, res) => {
+  db.queryDatabase(`SELECT products.productLine, products.productName, products.productCode
+  FROM products
+  order by productLine;`, [])
     .then((result) => {
       res.send(result);
     })
@@ -51,7 +52,7 @@ app.post("/product/:productCode", (req, res) => {
 
 app.post("/search/:searchValue", (req, res) => {
   const searchValue = req.params.searchValue;
-  db.queryDatabase('SELECT * FROM products WHERE productName LIKE ?', [`%${searchValue}%`])
+  db.queryDatabase('SELECT products.productName, products.productCode FROM products WHERE productName LIKE ?', [`%${searchValue}%`])
     .then((result) => {
       res.send(result);
     })
@@ -228,6 +229,13 @@ app.get("/order/:orderNumber", function(req, res) {
       console.log(error)
       res.send({success: false})
     })
+})
+
+app.get("/getrole", function(req, res) {
+  const token = req.cookies.accessToken
+  const role = jwt.getPermission(token)
+  res.send({permission: role})
+
 })
 
 app.listen(PORT, () => {
